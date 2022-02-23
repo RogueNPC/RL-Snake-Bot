@@ -33,6 +33,9 @@ class QTrainer:
 
     
     # TODO: Explain how this method works.
+    """ The train_step method takes the predicted condition (Q-value) of the agent's current state
+        and calcualtes a new Q-value based on the reward system and assigns it to its target condition.
+        The model then uses its optimizer and loss function to update the agent's behavior. """
     def train_step(self,state,action,reward,next_state,done):
         state = torch.tensor(state,dtype=torch.float).cpu()
         next_state = torch.tensor(next_state,dtype=torch.float).cpu()

@@ -92,8 +92,12 @@ class Agent:
         self.trainer.train_step(state,action,reward,next_state,done)
 
     # TODO: What is the role of epsilon in this method? Feel free to reference the OpenAI Gym RL tutorial from 02/09/22
+    """ Epsilon introduces the ability for the agent to make more random moves instead of always choosing the action 
+        it thinks is the best based on previously learned Q-values.  As the number of games the agent experiences--as 
+        I'm guessing that's what self.n_game represents-- the value of epsilon decreases which, in turn, decreases 
+        the probablity of the agent exploring (choosing a random action). """
     def get_action(self,state):
-        # random moves: tradeoff explotation / exploitation
+        # random moves: tradeoff exploration / exploitation
         self.epsilon = 80 - self.n_game
         final_move = [0,0,0]
         if(random.randint(0,200)<self.epsilon):
@@ -107,6 +111,14 @@ class Agent:
         return final_move
 
 # TODO: Write a couple sentences describing the training process coded below.
+""" At the start of a new game, the agent gets its starting state in the environment (the game).
+    The agent then calculates its move through the get_action method and performs its move through
+    the environment's get_state method.  The agent gets its new state after the move and then procedes
+    to be rewarded positively, negatively, or neutrally on it's current action based on its behavior 
+    through the train_short_memory method.  The agent then adds this to their memory which will be accessed
+    when the game ends and the agent uses the train_long_memory method and learns through the tens of thousands
+    of actions it performed in their previous game(s).  The training process will continue infinitly as the
+    agent performs more actions and plays many more games of Snake. """
 def train():
     plot_scores = []
     plot_mean_scores = []
@@ -136,8 +148,8 @@ def train():
             game.reset()
             agent.n_game += 1
             agent.train_long_memory()
-            if(score > reward): # new High score 
-                reward = score
+            if(score > record): # new High score 
+                record = score
                 agent.model.save()
             print('Game:',agent.n_game,'Score:',score,'Record:',record)
             
@@ -153,3 +165,16 @@ if(__name__=="__main__"):
 
 # TODO: Write a brief paragraph on your thoughts about this implementation. 
 # Was there anything surprising, interesting, confusing, or clever? Does the code smell at all?
+""" Seeing the implementation of Epsilon was really eye-opening to me because my previous project, 
+    which invovled a min-max algorithmic implementation of a chess-playing program, had the problem of
+    prefering the same set of moves due to a lack of randomness.  Knowing about this implementation
+    inspires me to go back and revise the chess-playing program to become more human-like using epsilon
+    or another kind of randomness that fits within my implementation.
+    
+    The implementation of the agent as a whole was a lot more straight-forward than I thought--even taking
+    into account the simplisity of Snake compared to games that are way more complex such as Starcraft.
+    The idea of generating states, granting a reward, and having the agent learn through short-term and long-term
+    methods only took up a few lines of code, its still way below my expectations of what is required to build a 
+    reinforcement learning AI, no matter how simple it may be.  Taking these thoughts into a broader outlook, 
+    I can almost guess this is the kind of structure that reinforcement learning neural networks such as 
+    Leela Chess Zero and other such game-playing bots utilize. """
